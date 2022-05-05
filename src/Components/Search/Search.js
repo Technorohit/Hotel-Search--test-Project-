@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { getHotels } from "../../Module/Search/Search.action";
 import ResortImg from '../../asset/resort.png';
 import LocationImg from '../../asset/location.png';
+import { HotelDetails } from "../HotelDetails/HotelDetails";
 
 import "./style.css";
 
@@ -12,8 +13,8 @@ export default function Search() {
   const [selectedCity, setSelectedCity] = React.useState("");
   const [itemToRender, setItemToRender] = React.useState({});
   const Hotels = useSelector((state) => state.search.hotels);
+  const [selectedHotel,setSelectedHotel] = React.useState({});
   const dispatch = useDispatch();
-
   useEffect(() => {
     if (Hotels.length === 0) {
       dispatch(getHotels());
@@ -27,7 +28,7 @@ export default function Search() {
       try {
         hotelResult = Hotels.filter((hotel) =>
           hotel.location.toLowerCase().match(selectedCity.toLowerCase())
-        ).map((hotel) => hotel.name+", "+hotel.location);
+        );
         let itemToRender = {
           hotels: hotelResult,
           location: cityResult,
@@ -41,6 +42,7 @@ export default function Search() {
   }, [selectedCity]);
 
   return (
+    <>
     <div className="search-container" style={{ background: Hotel }}>
       <div className="search-bar">
         <input
@@ -70,6 +72,7 @@ export default function Search() {
                 onClick={(e) => {
                   setSelectedCity(e.target.textContent);
                 }}
+                key={loc}
               >
                 <img src={LocationImg} style={{marginRight:'10px'}} alt=""/>{loc}
               </div>
@@ -88,18 +91,22 @@ export default function Search() {
             </div>
           )}
           {itemToRender.hotels &&
-            itemToRender.hotels.map((hotel) => (
+            itemToRender.hotels.map((hoteldetails) => (
               <div
                 className="city-dropdown"
                 onClick={(e) => {
                   setSelectedCity(e.target.textContent);
+                  setSelectedHotel(hoteldetails)
                 }}
+                key={hoteldetails.id}
               >
-                <img src={ResortImg} style={{marginRight:'10px'}} alt=""/>{hotel}
+                <img src={ResortImg} style={{marginRight:'10px'}} alt=""/>{`${hoteldetails.name}, ${hoteldetails.location}`}
               </div>
             ))}
+            
         </div>
       </div>
     </div>
+    {Object.keys(selectedHotel).length>0&&<HotelDetails {...selectedHotel} />}</>
   );
 }
