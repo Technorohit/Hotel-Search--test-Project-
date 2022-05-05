@@ -37,6 +37,7 @@ export default function Search() {
     } else {
       setItemToRender({});
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCity]);
 
   return (
